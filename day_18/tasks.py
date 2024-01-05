@@ -54,7 +54,7 @@ def expand_terrain(terrain, current_position, new_position):
             (0, new_position[1])
     elif new_position[1] < 0:
         expansion_size = abs(new_position[1])
-        return fill_left(terrain, expansion_size), (current_position[0], current_position[1] + expansion_size),\
+        return fill_left(terrain, expansion_size), (current_position[0], current_position[1] + expansion_size), \
             (new_position[0], 0)
     elif new_position[0] >= len(terrain):
         return fill_downwards(terrain, new_position[0] + 1 - len(terrain)), current_position, new_position
@@ -181,24 +181,36 @@ def get_inputs(lines):
     return inputs
 
 
-@timer_func
-def main(filename):
-    lines = read_input(filename)
-    inputs = get_inputs(lines)
+def get_instructions_from_color_codes(inputs):
+    modified_inputs = []
+    color_directions = ["R", "D", "L", "U"]
+    for i, j, color_code in inputs:
+        dec = int(color_code[:5], 16)
+        direction = color_directions[int(color_code[5])]
+        modified_inputs.append((direction, dec))
+    return modified_inputs
+
+
+def task_1(inputs):
     terrain = dig_lagoon(inputs)
     inside_digged_terrain = dig_out_inside(terrain)
     all_same_length = check_all_lines_equal_length(inside_digged_terrain)
-    """
-    for line in terrain:
-        all_same_length = all_same_length and len(line) == len(terrain[0])
-        print(f"{line} len: {len(line)}")
-    print("-----------")
-    for line in inside_digged_terrain:
-        print(f"{line} len: {len(line)}")
-    """
     print(f"Valid terrain: {all_same_length}")
     print(f"Total volume of lagoon: {count_num_digs(inside_digged_terrain)}")
 
 
-# main("example.txt")
-main("data.txt")
+def task_2(inputs):
+    modified_inputs = get_instructions_from_color_codes(inputs)
+    print(modified_inputs)
+
+
+@timer_func
+def main(filename):
+    lines = read_input(filename)
+    inputs = get_inputs(lines)
+    task_1(inputs)
+    task_2(inputs)
+
+
+main("example.txt")
+# main("data.txt")
